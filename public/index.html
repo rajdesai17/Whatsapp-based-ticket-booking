@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Museum Booking System</title>
+    <style>
+        .form-container {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Museum Booking System</h1>
+    <button onclick="showForm('register')">Register</button>
+    <button onclick="showForm('login')">Login</button>
+
+    <div id="registerForm" class="form-container">
+        <h2>Register Your Museum</h2>
+        <form id="registerFormElement">
+            <input type="text" name="museumName" placeholder="Museum Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <div id="loginForm" class="form-container">
+        <h2>Login</h2>
+        <form id="loginFormElement">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        function showForm(formType) {
+            document.getElementById('registerForm').classList.remove('active');
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById(formType + 'Form').classList.add('active');
+        }
+
+        document.getElementById('registerFormElement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful. Please log in.');
+                    showForm('login');
+                } else {
+                    alert('Registration failed: ' + data.message);
+                }
+            });
+        });
+
+        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/dashboard.html';
+        } else {
+            alert('Login failed: ' + data.message);
+        }
+    });
+});
+    </script>
+</body>
+</html>
